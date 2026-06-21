@@ -56,7 +56,8 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
 
-    <div class="phone-frame shadow-2xl flex flex-col">
+    <div class="phone-frame shadow-2xl flex flex-col relative">
+        
         <!-- HEADER -->
         <header class="bg-idepro-primary p-4 flex justify-between items-center text-white">
             <button id="menu-btn" class="text-2xl font-bold focus:outline-none">☰</button>
@@ -85,9 +86,10 @@
         </div>
 
         <!-- CONTENIDO -->
-        <main class="flex-1 p-5 pb-10 overflow-y-auto">
+        <main class="flex-1 p-5 pb-10 overflow-y-auto relative">
             <div class="text-center mb-6">
-                <img src="logo.png" alt="Logo IDEPRO" onerror="this.src='https://placehold.co/150x150/6b21a8/ffffff?text=IDEPRO'" class="mx-auto mb-4 w-32 h-auto rounded-lg shadow-sm object-contain">
+                <!-- LOGO MÁS PEQUEÑO: Se cambió w-32 por w-16 -->
+                <img src="logo.png" alt="Logo IDEPRO" onerror="this.src='https://placehold.co/150x150/6b21a8/ffffff?text=IDEPRO'" class="mx-auto mb-4 w-16 h-auto rounded-lg shadow-sm object-contain">
                 <h2 class="text-lg font-bold text-idepro-primary">FORMULARIO DE SOLICITUD DE AYUDA SOCIAL / PRÉSTAMO</h2>
             </div>
 
@@ -220,8 +222,35 @@
             </form>
         </main>
 
+        <!-- OVERLAY DE CARGA (Para informar al usuario que no cierre la página) -->
+        <div id="loading-overlay" class="hidden absolute inset-0 bg-white/95 z-[60] flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 border-4 border-idepro-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+            <h3 class="text-xl font-bold text-idepro-primary mb-2">Procesando Solicitud...</h3>
+            <p class="text-sm text-gray-700">Por favor, espere. Estamos subiendo de forma segura sus archivos y guardando su información.</p>
+            <p class="text-xs text-red-500 font-bold mt-3 animate-pulse">NO CIERRE ESTA VENTANA</p>
+        </div>
+
+        <!-- MODAL ANUNCIO DE ÉXITO -->
+        <div id="success-modal" class="hidden absolute inset-0 bg-black/60 z-[70] flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl p-6 text-center max-w-sm w-full transform transition-all border-t-4 border-idepro-secondary">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">¡Solicitud Enviada con Éxito!</h3>
+                <p class="text-sm text-gray-700 mb-5 leading-relaxed">
+                    Recuerda que este es un formulario de préstamo para <br>
+                    <strong class="text-idepro-primary">IDF INSTITUCION FINANCIERA DE DESARROLLO BOLIVIA - PROGRAMA AYUDA SOCIAL</strong>.
+                </p>
+                <button id="close-modal-btn" class="w-full bg-idepro-secondary text-white font-bold py-3 px-4 rounded hover:bg-teal-700 transition-colors shadow">
+                    Entendido
+                </button>
+            </div>
+        </div>
+
         <!-- FOOTER -->
-        <footer class="bg-idepro-primary text-white text-center p-3 text-xs">
+        <footer class="bg-idepro-primary text-white text-center p-3 text-xs z-10 relative">
             © 2026 IDEPRO IFD - Todos los derechos reservados.
         </footer>
 
@@ -263,7 +292,6 @@
 
     <script>
         // CONFIGURACIÓN DE TU GOOGLE APPS SCRIPT
-        // Reemplaza esta URL con la que te dé Google Apps Script al publicar como Aplicación Web
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6IXFUTUDfF0xJx2YqIUEBGgvoiDbGPH8tJ6uoVdjXos52GycBIHofJHsk2ECgNKAsgQ/exec";
 
         // Lógica de menú lateral
@@ -322,16 +350,14 @@
             chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll
         }
 
-        // Enviar mensaje
+        // Enviar mensaje en chatbot
         function handleSendChat() {
             const text = chatInput.value.trim();
             if (!text) return;
             
-            // Mensaje del usuario
             appendMessage(text, true);
             chatInput.value = '';
 
-            // Simular "Escribiendo..." y respuesta del bot
             setTimeout(() => {
                 appendMessage('Entiendo. Por favor, llena todos tus datos en el formulario y dale a "ENVIAR SOLICITUD". Un asesor evaluará tu perfil y se comunicará contigo.', false);
             }, 1000);
@@ -374,7 +400,6 @@
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => {
-                    // Remover el prefijo 'data:*/*;base64,' para enviar solo los bytes limpios
                     const base64Data = reader.result.split(',')[1];
                     resolve({
                         data: base64Data,
@@ -386,43 +411,55 @@
             });
         }
 
-        // Manejo del envío del formulario a Google Sheets
+        // Elementos de Modales y Carga
         const form = document.getElementById('loan-form');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
         const btnSpinner = document.getElementById('btn-spinner');
         const statusBox = document.getElementById('status-box');
+        
+        // Nuevos elementos
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const successModal = document.getElementById('success-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        // Cerrar modal de anuncio
+        closeModalBtn.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+        });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Verificar si configuró la URL
             if (APPS_SCRIPT_URL === "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT") {
                 statusBox.textContent = "Error: Debes configurar la URL de tu Google Apps Script en el código HTML.";
                 statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-red-100 text-red-800 block";
                 return;
             }
 
-            // Deshabilitar botón y activar spinner de carga
+            // Deshabilitar botón y activar PANTALLA DE CARGA
             submitBtn.disabled = true;
             btnText.textContent = "PROCESANDO SOLICITUD...";
             btnSpinner.classList.remove('hidden');
             statusBox.classList.add('hidden');
+            
+            // Mostrar overlay de carga para prevenir cierres
+            loadingOverlay.classList.remove('hidden');
 
             try {
-                // Obtener archivos de carnet y croquis
+                // Obtener archivos
                 const fileAnverso = document.getElementById('foto-ci-anverso').files[0];
                 const fileReverso = document.getElementById('foto-ci-reverso').files[0];
                 const fileCroquis = document.getElementById('foto-croquis').files[0];
 
-                // Convertirlos a Base64 en paralelo para mayor velocidad
+                // Convertirlos a Base64 en paralelo
                 const [anversoBase64, reversoBase64, croquisBase64] = await Promise.all([
                     convertFileToBase64(fileAnverso),
                     convertFileToBase64(fileReverso),
                     convertFileToBase64(fileCroquis)
                 ]);
 
-                // Crear objeto de datos mapeado a las columnas solicitadas
+                // Crear objeto de datos
                 const plazoSeleccionado = document.querySelector('input[name="plazo"]:checked').value;
                 const conforme = document.getElementById('conforme').checked ? "SÍ" : "NO";
 
@@ -443,7 +480,6 @@
                     conforme: conforme,
                     firma: document.getElementById('firma').value,
                     
-                    // Datos de archivos para procesar en Google Apps Script
                     anversoFile: anversoBase64,
                     reversoFile: reversoBase64,
                     croquisFile: croquisBase64
@@ -452,16 +488,15 @@
                 // Enviar la petición POST
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Evita problemas de CORS al comunicarse con Google Apps Script
+                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
 
-                // Al usar 'no-cors' no podemos leer la respuesta exacta, pero si no se genera error asumimos éxito
-                statusBox.textContent = "¡Solicitud enviada con éxito! Nos pondremos en contacto contigo.";
-                statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-green-100 text-green-800 block";
+                // ÉXITO: Mostrar el Modal con el Anuncio Solicitado
+                successModal.classList.remove('hidden');
                 
                 // Limpiar formulario
                 form.reset();
@@ -472,7 +507,8 @@
                 statusBox.textContent = "Ocurrió un error al enviar tu solicitud. Inténtalo nuevamente.";
                 statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-red-100 text-red-800 block";
             } finally {
-                // Habilitar botón y ocultar spinner
+                // Ocultar overlay de carga y restaurar botón
+                loadingOverlay.classList.add('hidden');
                 submitBtn.disabled = false;
                 btnText.textContent = "ENVIAR SOLICITUD";
                 btnSpinner.classList.add('hidden');
