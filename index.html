@@ -103,7 +103,18 @@
                     
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="ci" placeholder="C.I. N°" class="p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
-                        <input type="text" id="expedido" placeholder="Expedida en" class="p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                        <select id="expedido" class="p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none bg-white" required>
+                            <option value="">Expedida en...</option>
+                            <option value="LP">La Paz (LP)</option>
+                            <option value="SC">Santa Cruz (SC)</option>
+                            <option value="CB">Cochabamba (CB)</option>
+                            <option value="OR">Oruro (OR)</option>
+                            <option value="PT">Potosí (PT)</option>
+                            <option value="TJ">Tarija (TJ)</option>
+                            <option value="CH">Chuquisaca (CH)</option>
+                            <option value="BE">Beni (BE)</option>
+                            <option value="PD">Pando (PD)</option>
+                        </select>
                     </div>
 
                     <div>
@@ -125,7 +136,18 @@
 
                     <input type="text" id="direccion" placeholder="Dirección Domiciliaria" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
                     
-                    <input type="text" id="ciudad" placeholder="Ciudad / Localidad" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    <select id="ciudad" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none bg-white" required>
+                        <option value="">Seleccione Ciudad / Localidad...</option>
+                        <option value="La Paz">La Paz</option>
+                        <option value="El Alto">El Alto</option>
+                        <option value="Santa Cruz">Santa Cruz</option>
+                        <option value="Cochabamba">Cochabamba</option>
+                        <option value="Oruro">Oruro</option>
+                        <option value="Sucre">Sucre</option>
+                        <option value="Tarija">Tarija</option>
+                        <option value="Potosí">Potosí</option>
+                        <option value="Trinidad">Trinidad</option>
+                    </select>
                     
                     <input type="tel" id="telefono" placeholder="Teléfono / Celular" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
                     
@@ -155,7 +177,14 @@
                     
                     <input type="number" id="monto" placeholder="Monto Solicitado (Bs)" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
                     
-                    <input type="text" id="destino" placeholder="Destino del Préstamo (Ej. Capital de trabajo)" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    <select id="destino" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none bg-white" required>
+                        <option value="">Destino del Préstamo...</option>
+                        <option value="Capital de Trabajo">Capital de Trabajo</option>
+                        <option value="Compra de Activo Fijo">Compra de Activo Fijo</option>
+                        <option value="Mejora / Construcción de Vivienda">Mejora / Construcción de Vivienda</option>
+                        <option value="Consumo">Consumo</option>
+                        <option value="Agricultura / Ganadería">Agricultura / Ganadería</option>
+                    </select>
                     
                     <label class="block text-sm font-semibold mt-2">Plazo Solicitado:</label>
                     <div class="grid grid-cols-3 gap-2 text-xs">
@@ -195,12 +224,47 @@
         <footer class="bg-idepro-primary text-white text-center p-3 text-xs">
             © 2026 IDEPRO IFD - Todos los derechos reservados.
         </footer>
+
+        <!-- CHATBOT -->
+        <div id="chatbot-container" class="absolute bottom-4 right-4 z-50 flex flex-col items-end">
+            <!-- Ventana del chat -->
+            <div id="chat-window" class="hidden w-72 bg-white rounded-lg shadow-2xl border border-gray-200 mb-2 overflow-hidden flex flex-col transition-all duration-300">
+                <div class="bg-idepro-primary text-white p-3 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <img src="asistente.png" alt="Asistente" onerror="this.src='https://placehold.co/40x40/0d9488/ffffff?text=Bot'" class="w-8 h-8 rounded-full border border-white object-cover">
+                        <span class="font-bold text-sm">Asistente IDEPRO</span>
+                    </div>
+                    <button id="close-chat" class="text-white hover:text-gray-200 focus:outline-none text-lg">✕</button>
+                </div>
+                <div id="chat-body" class="p-3 h-56 overflow-y-auto bg-gray-50 text-sm space-y-3 flex-1">
+                    <!-- Mensaje inicial del bot -->
+                    <div class="flex items-end space-x-2">
+                        <img src="asistente.png" alt="Bot" onerror="this.src='https://placehold.co/30x30/0d9488/ffffff?text=Bot'" class="w-6 h-6 rounded-full object-cover">
+                        <div class="bg-white p-2 rounded-lg rounded-bl-none shadow-sm border border-gray-100 max-w-[80%]">
+                            <p class="text-gray-800">¡Hola! Soy tu asistente virtual. 👋 ¿Tienes alguna duda con el formulario de crédito?</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 border-t border-gray-200 bg-white flex items-center">
+                    <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-1 p-2 text-sm border border-gray-300 rounded-l focus:outline-none focus:ring-1 focus:ring-idepro-primary">
+                    <button id="send-chat" class="bg-idepro-primary text-white px-3 py-2 rounded-r hover:bg-purple-800 transition-colors">
+                        ➤
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón flotante -->
+            <button id="chatbot-btn" class="w-14 h-14 bg-idepro-primary rounded-full shadow-xl flex items-center justify-center hover:scale-105 transition-transform focus:outline-none border-2 border-white">
+                <img src="asistente.png" alt="Chat" onerror="this.src='https://placehold.co/40x40/6b21a8/ffffff?text=💬'" class="w-12 h-12 rounded-full object-cover">
+            </button>
+        </div>
+
     </div>
 
     <script>
         // CONFIGURACIÓN DE TU GOOGLE APPS SCRIPT
         // Reemplaza esta URL con la que te dé Google Apps Script al publicar como Aplicación Web
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRmHNKZG6xuZTuWxmuIOcF7NBbdIrobT5N6qHqHVO9ueGf57hQvizGoDrORvVc4hZe/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW2hkrZ0cqobivqA2isoSQiECo4MBGDZVxYPMieZbEGLPFO1UacDHGE6QX9I6va_mZ/exec";
 
         // Lógica de menú lateral
         const menuBtn = document.getElementById('menu-btn');
@@ -213,6 +277,69 @@
 
         closeMenuBtn.addEventListener('click', () => {
             sidebar.classList.add('-translate-x-full');
+        });
+
+        // Lógica del Chatbot
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const closeChat = document.getElementById('close-chat');
+        const chatWindow = document.getElementById('chat-window');
+        const sendChatBtn = document.getElementById('send-chat');
+        const chatInput = document.getElementById('chat-input');
+        const chatBody = document.getElementById('chat-body');
+
+        // Abrir/Cerrar chat
+        chatbotBtn.addEventListener('click', () => {
+            chatWindow.classList.toggle('hidden');
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+        });
+
+        // Función para agregar mensajes al chat
+        function appendMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isUser ? 'flex justify-end' : 'flex items-end space-x-2';
+            
+            let content = '';
+            if (isUser) {
+                content = `
+                    <div class="bg-idepro-secondary text-white p-2 rounded-lg rounded-br-none shadow-sm max-w-[80%] text-sm">
+                        <p>${text}</p>
+                    </div>
+                `;
+            } else {
+                content = `
+                    <img src="asistente.png" alt="Bot" onerror="this.src='https://placehold.co/30x30/0d9488/ffffff?text=Bot'" class="w-6 h-6 rounded-full object-cover">
+                    <div class="bg-white p-2 rounded-lg rounded-bl-none shadow-sm border border-gray-100 max-w-[80%] text-sm">
+                        <p class="text-gray-800">${text}</p>
+                    </div>
+                `;
+            }
+            
+            msgDiv.innerHTML = content;
+            chatBody.appendChild(msgDiv);
+            chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll
+        }
+
+        // Enviar mensaje
+        function handleSendChat() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            // Mensaje del usuario
+            appendMessage(text, true);
+            chatInput.value = '';
+
+            // Simular "Escribiendo..." y respuesta del bot
+            setTimeout(() => {
+                appendMessage('Entiendo. Por favor, llena todos tus datos en el formulario y dale a "ENVIAR SOLICITUD". Un asesor evaluará tu perfil y se comunicará contigo.', false);
+            }, 1000);
+        }
+
+        sendChatBtn.addEventListener('click', handleSendChat);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendChat();
         });
 
         // Lógica de la calculadora 6% anual
