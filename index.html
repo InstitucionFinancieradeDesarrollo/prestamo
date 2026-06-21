@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Crédito IDEPRO</title>
+    <meta name="description" content="Información sobre IDEPRO Institución Financiera de Desarrollo en Bolivia. Créditos productivos, microcréditos, financiamiento para emprendedores, requisitos, formularios, trámites y servicios financieros.">
+    <meta name="keywords" content="IDEPRO, IDEPRO Bolivia, Institución Financiera de Desarrollo, créditos Bolivia, microcréditos Bolivia, préstamos IDEPRO, financiamiento emprendedores, créditos productivos, desarrollo financiero, servicios financieros Bolivia, requisitos préstamo IDEPRO, formularios IDEPRO">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="author" content="IDEPRO Bolivia">
+
+    <meta property="og:title" content="IDEPRO Institución Financiera de Desarrollo Bolivia">
+    <meta property="og:description" content="Información, requisitos, créditos y servicios financieros de IDEPRO Bolivia.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="logo.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IDEPRO Institución Financiera de Desarrollo Bolivia">
+    <meta name="twitter:description" content="Información y servicios financieros relacionados con IDEPRO Bolivia.">
+    <meta name="twitter:image" content="logo.png">
+    
+    <!-- Ícono de página (favicon) -->
+    <link rel="icon" href="logo.png" type="image/png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        idepro: { primary: '#6b21a8', secondary: '#0d9488' }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .phone-frame { 
+            width: 100%; 
+            max-width: 400px; 
+            margin: auto; 
+            border: 8px solid #333; 
+            border-radius: 40px; 
+            overflow: hidden; 
+            background: white; 
+            min-height: 90vh; 
+            position: relative; 
+        }
+        @media (min-width: 640px) { 
+            .phone-frame { margin-top: 20px; } 
+        }
+        /* Transición suave para el menú */
+        #sidebar { transition: transform 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <div class="phone-frame shadow-2xl flex flex-col">
+        <!-- HEADER -->
+        <header class="bg-idepro-primary p-4 flex justify-between items-center text-white">
+            <button id="menu-btn" class="text-2xl font-bold focus:outline-none">☰</button>
+            <div class="text-center">
+                <h1 class="font-bold text-lg leading-none">IDEPRO</h1>
+                <p class="text-[0.60rem] mt-1 font-medium tracking-wide text-white/90">INSTITUCION FINANCIERA DE DESARROLLO BOLIVIA</p>
+            </div>
+            <div class="w-8"></div>
+        </header>
+
+        <!-- MENU LATERAL -->
+        <div id="sidebar" class="absolute top-0 left-0 h-full w-64 bg-white z-50 shadow-2xl p-6 transform -translate-x-full">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="font-bold text-idepro-primary text-xl">Menú</h2>
+                <button id="close-menu" class="text-2xl text-gray-500 focus:outline-none">✕</button>
+            </div>
+            <nav class="space-y-4">
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Inicio</a>
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Créditos</a>
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Ahorros</a>
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Seguros</a>
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Promociones</a>
+                <a href="https://www.idepro.com.bo/" class="block text-gray-700 font-medium hover:text-idepro-primary transition-colors">Servicios</a>
+                <a href="https://www.idepro.com.bo/" class="block font-bold text-idepro-secondary border-t pt-4 mt-4 hover:text-idepro-primary transition-colors">App IDEPRO</a>
+            </nav>
+        </div>
+
+        <!-- CONTENIDO -->
+        <main class="flex-1 p-5 pb-10 overflow-y-auto">
+            <div class="text-center mb-6">
+                <img src="logo.png" alt="Logo IDEPRO" onerror="this.src='https://placehold.co/150x150/6b21a8/ffffff?text=IDEPRO'" class="mx-auto mb-4 w-32 h-auto rounded-lg shadow-sm object-contain">
+                <h2 class="text-lg font-bold text-idepro-primary">FORMULARIO DE SOLICITUD DE AYUDA SOCIAL / PRÉSTAMO</h2>
+            </div>
+
+            <!-- MENSAJES DE ESTADO DE ENVÍO -->
+            <div id="status-box" class="hidden mb-4 p-3 rounded text-sm text-center font-semibold"></div>
+
+            <form id="loan-form" class="space-y-5">
+                <!-- I. DATOS DEL SOLICITANTE -->
+                <div class="space-y-3">
+                    <h3 class="text-idepro-secondary font-bold border-b border-idepro-secondary pb-1">I. DATOS DEL SOLICITANTE</h3>
+                    
+                    <input type="text" id="nombre" placeholder="Nombres y Apellidos" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="ci" placeholder="C.I. N°" class="p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                        <input type="text" id="expedido" placeholder="Expedida en" class="p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-gray-500 italic mb-1">Fecha de Nacimiento:</label>
+                        <input type="date" id="fecha-nacimiento" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-gray-500 italic mb-1">Estado Civil:</label>
+                        <select id="estado-civil" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none bg-white" required>
+                            <option value="">Seleccione Estado Civil...</option>
+                            <option value="Soltero(a)">Soltero(a)</option>
+                            <option value="Casado(a)">Casado(a)</option>
+                            <option value="Divorciado(a)">Divorciado(a)</option>
+                            <option value="Viudo(a)">Viudo(a)</option>
+                            <option value="Unión Libre">Unión Libre</option>
+                        </select>
+                    </div>
+
+                    <input type="text" id="direccion" placeholder="Dirección Domiciliaria" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <input type="text" id="ciudad" placeholder="Ciudad / Localidad" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <input type="tel" id="telefono" placeholder="Teléfono / Celular" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <input type="text" id="actividad" placeholder="Actividad / Ocupación" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <input type="text" id="trabajo" placeholder="Lugar de Trabajo" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none">
+                    
+                    <div>
+                        <label class="block text-xs text-gray-500 italic">Carnet Anverso (Foto/PDF):</label>
+                        <input type="file" id="foto-ci-anverso" accept="image/*,application/pdf" class="w-full text-sm p-1 border border-gray-300 rounded bg-white mt-1">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-500 italic">Carnet Reverso (Foto/PDF):</label>
+                        <input type="file" id="foto-ci-reverso" accept="image/*,application/pdf" class="w-full text-sm p-1 border border-gray-300 rounded bg-white mt-1">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs text-gray-500 italic">Croquis de Domicilio (Imagen/PDF):</label>
+                        <input type="file" id="foto-croquis" accept="image/*,application/pdf" class="w-full text-sm p-1 border border-gray-300 rounded bg-white mt-1">
+                    </div>
+                </div>
+
+                <!-- II. DATOS DEL CRÉDITO -->
+                <div class="space-y-3">
+                    <h3 class="text-idepro-secondary font-bold border-b border-idepro-secondary pb-1">II. DATOS DEL CRÉDITO</h3>
+                    
+                    <input type="number" id="monto" placeholder="Monto Solicitado (Bs)" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <input type="text" id="destino" placeholder="Destino del Préstamo (Ej. Capital de trabajo)" class="w-full p-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                    
+                    <label class="block text-sm font-semibold mt-2">Plazo Solicitado:</label>
+                    <div class="grid grid-cols-3 gap-2 text-xs">
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="4" class="mr-1" required> 4 meses</label>
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="6" class="mr-1"> 6 meses</label>
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="8" class="mr-1"> 8 meses</label>
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="12" class="mr-1"> 12 meses</label>
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="18" class="mr-1"> 18 meses</label>
+                        <label class="border border-gray-300 p-2 rounded text-center cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="plazo" value="24" class="mr-1"> 24 meses</label>
+                    </div>
+
+                    <!-- Calculadora -->
+                    <div id="resumen-calculo" class="bg-green-50 p-3 rounded text-sm hidden border border-green-200 mt-3 shadow-inner">
+                        <p class="text-green-800">Interés (6% anual): <span id="calc-interes" class="font-medium">0</span> Bs</p>
+                        <p class="font-bold text-green-900 mt-1">Total a pagar: <span id="calc-total">0</span> Bs</p>
+                    </div>
+                </div>
+
+                <!-- DECLARACIÓN -->
+                <div class="bg-gray-50 p-4 border border-gray-200 rounded shadow-sm">
+                    <h3 class="font-bold mb-2 text-sm text-idepro-primary">Minuta de Préstamo de Dinero y Reconocimiento de Firmas</h3>
+                    <label class="flex items-start space-x-2 text-sm cursor-pointer mt-2">
+                        <input type="checkbox" id="conforme" required class="mt-1"> 
+                        <span class="text-gray-700 leading-tight">Estoy conforme con los términos y condiciones estipulados para este préstamo.</span>
+                    </label>
+                    <input type="text" id="firma" placeholder="Tu nombre completo aquí (Firma digital)" class="w-full p-2 mt-3 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-idepro-primary focus:border-transparent outline-none" required>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-idepro-secondary hover:bg-teal-700 transition-colors text-white py-3 rounded font-bold shadow-lg mt-4 flex justify-center items-center">
+                    <span id="btn-text">ENVIAR SOLICITUD</span>
+                    <span id="btn-spinner" class="hidden ml-2 inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                </button>
+            </form>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-idepro-primary text-white text-center p-3 text-xs">
+            © 2026 IDEPRO IFD - Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE TU GOOGLE APPS SCRIPT
+        // Reemplaza esta URL con la que te dé Google Apps Script al publicar como Aplicación Web
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRmHNKZG6xuZTuWxmuIOcF7NBbdIrobT5N6qHqHVO9ueGf57hQvizGoDrORvVc4hZe/exec";
+
+        // Lógica de menú lateral
+        const menuBtn = document.getElementById('menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+
+        closeMenuBtn.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+
+        // Lógica de la calculadora 6% anual
+        const formInputs = document.querySelectorAll('input');
+        const montoInput = document.getElementById('monto');
+        const interesSpan = document.getElementById('calc-interes');
+        const totalSpan = document.getElementById('calc-total');
+        const resumenDiv = document.getElementById('resumen-calculo');
+
+        formInputs.forEach(el => el.addEventListener('input', () => {
+            const monto = parseFloat(montoInput.value) || 0;
+            const plazoSeleccionado = document.querySelector('input[name="plazo"]:checked');
+            const plazo = plazoSeleccionado ? parseFloat(plazoSeleccionado.value) : 0;
+            
+            if(monto > 0 && plazo > 0) {
+                const interes = monto * 0.06 * (plazo / 12);
+                interesSpan.textContent = interes.toFixed(2);
+                totalSpan.textContent = (monto + interes).toFixed(2);
+                resumenDiv.classList.remove('hidden');
+            } else {
+                resumenDiv.classList.add('hidden');
+            }
+        }));
+
+        // Función auxiliar para convertir archivos a Base64
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    resolve({ data: "", name: "", type: "" });
+                    return;
+                }
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    // Remover el prefijo 'data:*/*;base64,' para enviar solo los bytes limpios
+                    const base64Data = reader.result.split(',')[1];
+                    resolve({
+                        data: base64Data,
+                        name: file.name,
+                        type: file.type
+                    });
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Manejo del envío del formulario a Google Sheets
+        const form = document.getElementById('loan-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const statusBox = document.getElementById('status-box');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Verificar si configuró la URL
+            if (APPS_SCRIPT_URL === "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT") {
+                statusBox.textContent = "Error: Debes configurar la URL de tu Google Apps Script en el código HTML.";
+                statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-red-100 text-red-800 block";
+                return;
+            }
+
+            // Deshabilitar botón y activar spinner de carga
+            submitBtn.disabled = true;
+            btnText.textContent = "PROCESANDO SOLICITUD...";
+            btnSpinner.classList.remove('hidden');
+            statusBox.classList.add('hidden');
+
+            try {
+                // Obtener archivos de carnet y croquis
+                const fileAnverso = document.getElementById('foto-ci-anverso').files[0];
+                const fileReverso = document.getElementById('foto-ci-reverso').files[0];
+                const fileCroquis = document.getElementById('foto-croquis').files[0];
+
+                // Convertirlos a Base64 en paralelo para mayor velocidad
+                const [anversoBase64, reversoBase64, croquisBase64] = await Promise.all([
+                    convertFileToBase64(fileAnverso),
+                    convertFileToBase64(fileReverso),
+                    convertFileToBase64(fileCroquis)
+                ]);
+
+                // Crear objeto de datos mapeado a las columnas solicitadas
+                const plazoSeleccionado = document.querySelector('input[name="plazo"]:checked').value;
+                const conforme = document.getElementById('conforme').checked ? "SÍ" : "NO";
+
+                const formData = {
+                    nombre: document.getElementById('nombre').value,
+                    ci: document.getElementById('ci').value,
+                    expedido: document.getElementById('expedido').value,
+                    fechaNacimiento: document.getElementById('fecha-nacimiento').value,
+                    estadoCivil: document.getElementById('estado-civil').value,
+                    direccion: document.getElementById('direccion').value,
+                    ciudad: document.getElementById('ciudad').value,
+                    telefono: document.getElementById('telefono').value,
+                    actividad: document.getElementById('actividad').value,
+                    trabajo: document.getElementById('trabajo').value || "No especificado",
+                    monto: document.getElementById('monto').value,
+                    destino: document.getElementById('destino').value,
+                    plazo: plazoSeleccionado,
+                    conforme: conforme,
+                    firma: document.getElementById('firma').value,
+                    
+                    // Datos de archivos para procesar en Google Apps Script
+                    anversoFile: anversoBase64,
+                    reversoFile: reversoBase64,
+                    croquisFile: croquisBase64
+                };
+
+                // Enviar la petición POST
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Evita problemas de CORS al comunicarse con Google Apps Script
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Al usar 'no-cors' no podemos leer la respuesta exacta, pero si no se genera error asumimos éxito
+                statusBox.textContent = "¡Solicitud enviada con éxito! Nos pondremos en contacto contigo.";
+                statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-green-100 text-green-800 block";
+                
+                // Limpiar formulario
+                form.reset();
+                resumenDiv.classList.add('hidden');
+
+            } catch (error) {
+                console.error("Error al enviar formulario:", error);
+                statusBox.textContent = "Ocurrió un error al enviar tu solicitud. Inténtalo nuevamente.";
+                statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-red-100 text-red-800 block";
+            } finally {
+                // Habilitar botón y ocultar spinner
+                submitBtn.disabled = false;
+                btnText.textContent = "ENVIAR SOLICITUD";
+                btnSpinner.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
