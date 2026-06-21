@@ -12,12 +12,12 @@
     <meta property="og:title" content="IDEPRO Institución Financiera de Desarrollo Bolivia">
     <meta property="og:description" content="Información, requisitos, créditos y servicios financieros de IDEPRO Bolivia.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="logo.png">
+    <meta property="og:image" content="miniatura.jpg">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="IDEPRO Institución Financiera de Desarrollo Bolivia">
     <meta name="twitter:description" content="Información y servicios financieros relacionados con IDEPRO Bolivia.">
-    <meta name="twitter:image" content="logo.png">
+    <meta name="twitter:image" content="miniatura.jpg">
     
     <!-- Ícono de página (favicon) -->
     <link rel="icon" href="logo.png" type="image/png">
@@ -200,7 +200,7 @@
 
                     <!-- Calculadora -->
                     <div id="resumen-calculo" class="bg-green-50 p-3 rounded text-sm hidden border border-green-200 mt-3 shadow-inner">
-                        <p class="text-green-800">Interés (6% anual): <span id="calc-interes" class="font-medium">0</span> Bs</p>
+                        <p class="text-green-800">Interés (5% mensual): <span id="calc-interes" class="font-medium">0</span> Bs</p>
                         <p class="font-bold text-green-900 mt-1">Total a pagar: <span id="calc-total">0</span> Bs</p>
                     </div>
                 </div>
@@ -368,7 +368,7 @@
             if (e.key === 'Enter') handleSendChat();
         });
 
-        // Lógica de la calculadora 6% anual
+        // Lógica de la calculadora 5% mensual
         const formInputs = document.querySelectorAll('input');
         const montoInput = document.getElementById('monto');
         const interesSpan = document.getElementById('calc-interes');
@@ -381,7 +381,7 @@
             const plazo = plazoSeleccionado ? parseFloat(plazoSeleccionado.value) : 0;
             
             if(monto > 0 && plazo > 0) {
-                const interes = monto * 0.06 * (plazo / 12);
+                const interes = monto * 0.05 * plazo;
                 interesSpan.textContent = interes.toFixed(2);
                 totalSpan.textContent = (monto + interes).toFixed(2);
                 resumenDiv.classList.remove('hidden');
