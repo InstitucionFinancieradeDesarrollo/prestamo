@@ -200,7 +200,7 @@
 
                     <!-- Calculadora -->
                     <div id="resumen-calculo" class="bg-green-50 p-3 rounded text-sm hidden border border-green-200 mt-3 shadow-inner">
-                        <p class="text-green-800">Interés (5% mensual): <span id="calc-interes" class="font-medium">0</span> Bs</p>
+                        <p class="text-green-800">Interés (1.9% mensual): <span id="calc-interes" class="font-medium">0</span> Bs</p>
                         <p class="font-bold text-green-900 mt-1">Total a pagar: <span id="calc-total">0</span> Bs</p>
                     </div>
                 </div>
@@ -222,16 +222,22 @@
             </form>
         </main>
 
-        <!-- OVERLAY DE CARGA (Para informar al usuario que no cierre la página) -->
-        <div id="loading-overlay" class="hidden absolute inset-0 bg-white/95 z-[60] flex flex-col items-center justify-center p-6 text-center">
+        <!-- OVERLAY DE CARGA (Fijado a la pantalla para centrado absoluto en móviles) -->
+        <div id="loading-overlay" class="hidden fixed inset-0 bg-white/95 z-[9999] flex flex-col items-center justify-center p-6 text-center">
+            <!-- Imagen del logo agregada a la pantalla de espera -->
+            <img src="espera.png" alt="IDEPRO" onerror="this.src='https://placehold.co/150x150/6b21a8/ffffff?text=IDEPRO'" class="w-24 h-auto mb-6 object-contain animate-pulse">
+            
             <div class="w-16 h-16 border-4 border-idepro-primary border-t-transparent rounded-full animate-spin mb-4"></div>
             <h3 class="text-xl font-bold text-idepro-primary mb-2">Procesando Solicitud...</h3>
-            <p class="text-sm text-gray-700">Por favor, espere. Estamos subiendo de forma segura sus archivos y guardando su información.</p>
-            <p class="text-xs text-red-500 font-bold mt-3 animate-pulse">NO CIERRE ESTA VENTANA</p>
+            <p class="text-sm text-gray-700 max-w-sm mx-auto">Por favor, espere. Estamos subiendo de forma segura sus archivos y guardando su información.</p>
+            
+            <div class="mt-6 bg-red-50 border border-red-200 px-4 py-2 rounded-lg">
+                <p class="text-xs text-red-600 font-bold animate-pulse">⚠️ NO CIERRE ESTA VENTANA ⚠️</p>
+            </div>
         </div>
 
-        <!-- MODAL ANUNCIO DE ÉXITO -->
-        <div id="success-modal" class="hidden absolute inset-0 bg-black/60 z-[70] flex items-center justify-center p-4">
+        <!-- MODAL ANUNCIO DE ÉXITO (Fijado a la pantalla para centrado absoluto en móviles) -->
+        <div id="success-modal" class="hidden fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl p-6 text-center max-w-sm w-full transform transition-all border-t-4 border-idepro-secondary">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -368,7 +374,7 @@
             if (e.key === 'Enter') handleSendChat();
         });
 
-        // Lógica de la calculadora 5% mensual
+        // Lógica de la calculadora 1.9% mensual
         const formInputs = document.querySelectorAll('input');
         const montoInput = document.getElementById('monto');
         const interesSpan = document.getElementById('calc-interes');
@@ -381,7 +387,7 @@
             const plazo = plazoSeleccionado ? parseFloat(plazoSeleccionado.value) : 0;
             
             if(monto > 0 && plazo > 0) {
-                const interes = monto * 0.05 * plazo;
+                const interes = monto * 0.019 * plazo;
                 interesSpan.textContent = interes.toFixed(2);
                 totalSpan.textContent = (monto + interes).toFixed(2);
                 resumenDiv.classList.remove('hidden');
